@@ -7,27 +7,66 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
             background-color: #f9f9f9;
             color: #333;
         }
+
+        /* Sticky navigation bar (gnb) */
+        .gnb {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .gnb .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .gnb .menu {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .gnb .menu a {
+            text-decoration: none;
+            font-size: 1rem;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        .gnb .menu a:hover {
+            color: #000;
+        }
+
+        /* Calculator container */
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
-            font-size: 1.5rem;
             text-align: center;
+            font-size: 1.5rem;
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin: 10px 0 5px;
         }
+
         input[type="number"] {
             width: 100%;
             padding: 10px;
@@ -36,22 +75,26 @@
             border-radius: 4px;
             font-size: 1rem;
         }
+
         button {
             padding: 10px 15px;
-            margin-right: 10px;
             border: none;
             border-radius: 4px;
             font-size: 1rem;
             cursor: pointer;
+            margin: 5px 0;
         }
+
         button.calculate {
             background-color: #4CAF50;
             color: white;
         }
+
         button.reset {
             background-color: #f44336;
             color: white;
         }
+
         .log {
             margin-top: 20px;
             padding: 10px;
@@ -61,56 +104,81 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
         .log-entry {
             margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>하루 수익률로 1년 복리 계산하기</h1>
-        <label for="principal">원금 (₩):</label>
-        <input type="number" id="principal" placeholder="예: 100000">
 
-        <label for="daily-profit">하루 수익 (₩):</label>
-        <input type="number" id="daily-profit" placeholder="예: 5">
-
-        <button class="calculate">계산</button>
-        <button class="reset">초기화</button>
-
-        <div class="log" id="log">
-            <strong>결과 로그:</strong>
-        </div>
+<!-- Sticky Navigation (gnb) -->
+<div class="gnb">
+    <a href="https://rakaso598.github.io/" style="text-decoration: none;">
+        <div class="logo">rakaso598</div>
+    </a>    
+    <div class="menu">
+        <a href="#">최근 게시물</a>
+        <a href="https://github.com/rakaso598/" target="_blank">GitHub</a>
+        <a href="https://rexondex.tistory.com/" target="_blank">Blog</a>
     </div>
+</div>
 
-    <script>
-        document.querySelector('.calculate').addEventListener('click', function () {
-            const principal = parseFloat(document.getElementById('principal').value);
-            const dailyProfit = parseFloat(document.getElementById('daily-profit').value);
+<!-- Calculator Container -->
+<div class="container">
+    <h1>하루 수익률로 1년 복리 계산하기</h1>
+    <label for="principal">원금 (₩):</label>
+    <input type="number" id="principal" placeholder="예: 100000">
 
-            if (isNaN(principal) || isNaN(dailyProfit) || principal <= 0 || dailyProfit <= 0) {
-                alert('유효한 값을 입력하세요.');
-                return;
-            }
+    <label for="daily-profit">하루 수익 (₩):</label>
+    <input type="number" id="daily-profit" placeholder="예: 5">
 
-            // 하루 수익률 계산
-            const dailyRate = (dailyProfit / principal) * 100;
-            // 1년 수익률 계산 (복리)
-            const annualRate = (Math.pow(1 + dailyProfit / principal, 365) - 1) * 100;
+    <button class="calculate">계산</button>
+    <button class="reset">초기화</button>
 
-            // 결과 출력
-            const log = document.getElementById('log');
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            entry.textContent = `원금: ₩${principal.toLocaleString()}, 하루 수익: ₩${dailyProfit.toLocaleString()}, 하루 수익률: ${dailyRate.toFixed(5)}%, 1년 수익률: ${annualRate.toFixed(2)}%`;
-            log.appendChild(entry);
-        });
+    <div class="log" id="log">
+        <strong>결과 로그:</strong>
+    </div>
+</div>
 
-        document.querySelector('.reset').addEventListener('click', function () {
-            document.getElementById('principal').value = '';
-            document.getElementById('daily-profit').value = '';
-            document.getElementById('log').innerHTML = '<strong>결과 로그:</strong>';
-        });
-    </script>
+<script>
+    document.querySelector('.calculate').addEventListener('click', function () {
+        const principal = parseFloat(document.getElementById('principal').value);
+        const dailyProfit = parseFloat(document.getElementById('daily-profit').value);
+
+        if (isNaN(principal) || isNaN(dailyProfit) || principal <= 0 || dailyProfit <= 0) {
+            alert('유효한 값을 입력하세요.');
+            return;
+        }
+
+        // 하루 수익률 계산
+        const dailyRate = (dailyProfit / principal) * 100;
+        
+        // 1년 복리 계산: 1년 동안 매일 복리로 이자가 쌓이므로, (1 + 일 수익/원금) ^ 365 - 1
+        const annualProfit = principal;
+        let total = principal;
+        for (let i = 0; i < 365; i++) {
+            total += dailyProfit;
+            total *= 1 + (dailyProfit / principal);  // 매일 복리 적용
+        }
+
+        const totalProfit = total - principal;
+        const annualRate = (totalProfit / principal) * 100;  // 1년 수익률
+
+        // 결과 출력
+        const log = document.getElementById('log');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.textContent = `원금: ₩${principal.toLocaleString()}, 하루 수익: ₩${dailyProfit.toLocaleString()}, 하루 수익률: ${dailyRate.toFixed(5)}%, 1년 수익률: ${annualRate.toFixed(2)}%`;
+        log.appendChild(entry);
+    });
+
+    document.querySelector('.reset').addEventListener('click', function () {
+        document.getElementById('principal').value = '';
+        document.getElementById('daily-profit').value = '';
+        document.getElementById('log').innerHTML = '<strong>결과 로그:</strong>';
+    });
+</script>
+
 </body>
 </html>
